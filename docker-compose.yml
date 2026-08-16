@@ -1,17 +1,17 @@
-version: '3.8'
-
 services:
-  postgres:
+  db:
     image: postgres:15-alpine
     container_name: userservice-db
     environment:
-      POSTGRES_DB: userservice
-      POSTGRES_USER: postgres
+      POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: users_db
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-
-volumes:
-  pgdata:
+      - ./db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d users_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

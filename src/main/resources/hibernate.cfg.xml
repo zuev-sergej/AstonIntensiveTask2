@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- 1. Драйвер для PostgreSQL -->
+        <property name="connection.driver_class">org.postgresql.Driver</property>
+
+        <!-- 2. URL подключения.
+             Важно: host=localhost, так как ты запускаешь Java-приложение на своей машине (в IDEA),
+             а база крутится в Docker-контейнере, проброшенном на порт 5432.
+             База данных: userservice (из переменной POSTGRES_DB в docker-compose) -->
+        <property name="connection.url">jdbc:postgresql://localhost:5432/userservice</property>
+
+        <!-- 3. Учетные данные (из docker-compose.yml) -->
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/users_db</property>
+        <property name="hibernate.connection.username">user</property>
+        <property name="hibernate.connection.password">password</property>
+
+        <!-- 5. Настройка пула соединений (для локальной разработки достаточно 1-5) -->
+        <property name="connection.pool_size">5</property>
+
+        <!-- 6. Автоматическое создание/обновление таблиц.
+             Варианты:
+             - update: создаст таблицы, если их нет, и обновит структуру, если ты изменил Entity. (Рекомендую для учебы/разработки)
+             - create: каждый раз будет удалять старые таблицы и создавать новые (потеряешь данные!).
+             - validate: только проверит, что таблицы совпадают с Entity, но не создаст их.
+             - none: ничего не делает. -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <!-- 7. Логирование (опционально, но очень полезно для отладки) -->
+        <property name="show_sql">false</property>
+        <property name="format_sql">false</property>
+
+        <!-- 8. Java-классы (Entity) -->
+        <mapping class="com.example.userservice.model.User"/>
+
+    </session-factory>
+</hibernate-configuration>
