@@ -17,15 +17,15 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
-    public String name;
+    private String name;
 
     @Column(unique = true, nullable = false)
-    public String email;
+    private String email;
 
-    public Integer age;
+    private Integer age;
 
     @Column(name = "created_at")
-    public LocalDateTime created_at;
+    private LocalDateTime created_at;
 }
