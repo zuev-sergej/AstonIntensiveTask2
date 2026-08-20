@@ -3,17 +3,21 @@ package com.example.userservice.dao;
 import com.example.userservice.config.HibernateSession;
 import com.example.userservice.model.User;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
+    private final SessionFactory sessionFactory;
 
+    public UserDaoImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public void save(User user) {
-        try (Session session = HibernateSession.getSessionFactory().openSession()) {
+        try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             try {
                 session.persist(user);
@@ -34,6 +38,7 @@ public class UserDaoImpl implements UserDao {
                 transaction.commit();
             } catch (Exception e) {
                 transaction.rollback();
+                throw e;
             }
         }
     }
@@ -43,13 +48,12 @@ public class UserDaoImpl implements UserDao {
         try (Session session = HibernateSession.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
             try {
-
                 User user = session.find(User.class, id);
                 if (user == null) {
                     throw new IllegalArgumentException("Пользователь с id=" + id + " не найден");
                 }
                 session.remove(user);
-                transaction.commit(); // <-- обязательно!
+                transaction.commit();
             } catch (Exception e) {
                 if (transaction != null) {
                     transaction.rollback();

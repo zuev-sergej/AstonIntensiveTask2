@@ -3,6 +3,7 @@ package com.example.userservice.console;
 import com.example.userservice.config.HibernateSession;
 import com.example.userservice.model.User;
 import com.example.userservice.service.UserService;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

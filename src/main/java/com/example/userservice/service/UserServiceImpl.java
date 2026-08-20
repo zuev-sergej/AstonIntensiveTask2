@@ -17,11 +17,6 @@ public class UserServiceImpl implements UserService {
         this.userValidator = validator;
     }
 
-    public UserServiceImpl() {
-        this.userDao = new UserDaoImpl();
-        this.userValidator = new UserValidator();
-    }
-
     @Override
     public void createUser(User user) {
         userValidator.validate(user);

@@ -11,23 +11,23 @@ public class UserValidator {
         if (user == null) {
             throw new ValidationException("Пользователь не может быть null");
         }
-        if (user.name == null || user.name.trim().isEmpty()) {
+        if (user.getName() == null || user.getName().trim().isEmpty()) {
             throw new ValidationException("Имя пользователя обязательно для заполнения");
         }
-        if (user.name.length() > 100) {
+        if (user.getName().length() > 100) {
             throw new ValidationException("Имя не должно превышать 100 символов");
         }
-        if (user.email == null || user.email.isBlank()) {
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
             throw new ValidationException("Email обязателен для заполнения");
         }
-        if (!EMAIL_PATTERN.matcher(user.email).matches()) {
-            throw new ValidationException("Некорректный формат email: " + user.email);
+        if (!EMAIL_PATTERN.matcher(user.getEmail()).matches()) {
+            throw new ValidationException("Некорректный формат email: " + user.getEmail());
         }
-        Integer age = user.age;
+        Integer age = user.getAge();
         if (age == null) {
             throw new ValidationException("Возраст обязателен для заполнения");
         }
-        if (user.age <= 0 || user.age > 150) {
+        if (user.getAge() <= 0 || user.getAge() > 150) {
             throw new ValidationException("Некорректный возраст");
         }
     }
