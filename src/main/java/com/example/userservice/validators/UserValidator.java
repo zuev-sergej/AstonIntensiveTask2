@@ -23,10 +23,7 @@ public class UserValidator {
         if (!EMAIL_PATTERN.matcher(user.getEmail()).matches()) {
             throw new ValidationException("Некорректный формат email: " + user.getEmail());
         }
-        Integer age = user.getAge();
-        if (age == null) {
-            throw new ValidationException("Возраст обязателен для заполнения");
-        }
+
         if (user.getAge() <= 0 || user.getAge() > 150) {
             throw new ValidationException("Некорректный возраст");
         }

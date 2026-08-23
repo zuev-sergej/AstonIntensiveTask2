@@ -3,7 +3,6 @@ package com.example.userservice.console;
 import com.example.userservice.config.HibernateSession;
 import com.example.userservice.model.User;
 import com.example.userservice.service.UserService;
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +60,7 @@ public class Console {
         System.out.println("------------");
     }
 
-    private void createUser() {
+    void createUser() {
         System.out.println("--- Создание нового пользователя ---");
         String name = readString("Введите имя: ");
         String email = readString("Введите email: ");
@@ -131,6 +130,7 @@ public class Console {
 
         String nameInput = readString("Новое имя (оставьте пустым, чтобы не менять): ");
         String emailInput = readString("Новый email (оставьте пустым, чтобы не менять): ");
+        String ageInput = readString("Новый возраст (оставьте пустым, чтобы не менять): ");
 
         if (!nameInput.trim().isEmpty()) {
             existingUser.setName(nameInput);
@@ -139,7 +139,19 @@ public class Console {
             existingUser.setEmail(emailInput);
         }
 
-        if (nameInput.trim().isEmpty() && emailInput.trim().isEmpty()) {
+        if (!ageInput.trim().isEmpty()) {
+            try {
+                int newAge = Integer.parseInt(ageInput.trim());
+                if (newAge < 0 || newAge > 150) {
+                    logger.error("Некорректный возраст: {}. Возраст должен быть от 0 до 150.", newAge);
+                } else {
+                    existingUser.setAge(newAge);
+                }
+            } catch (NumberFormatException e) {
+                logger.error("Введено некорректное значение возраста: '{}'. Возраст не будет изменён.", ageInput);
+            }
+        }
+        if (nameInput.trim().isEmpty() && emailInput.trim().isEmpty() && ageInput.trim().isEmpty()) {
             System.out.println("Ничего не изменено.");
             return;
         }
@@ -194,7 +206,7 @@ public class Console {
             System.out.print(prompt);
             if (scanner.hasNextLong()) {
                 long value = scanner.nextLong();
-                scanner.nextLine(); // очистка буфера
+                scanner.nextLine();
                 return value;
             } else {
                 System.out.println("Пожалуйста, введите корректное число (ID).");

@@ -1,9 +1,9 @@
 package com.example.userservice.service;
 
 import com.example.userservice.dao.UserDao;
-import com.example.userservice.dao.UserDaoImpl;
 import com.example.userservice.model.User;
 import com.example.userservice.validators.UserValidator;
+import com.example.userservice.validators.ValidationException;
 
 import java.util.List;
 
@@ -18,14 +18,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUser(User user) {
+    public User createUser(User user) {
         userValidator.validate(user);
         userDao.save(user);
+        return user;
     }
 
     @Override
     public User getById(Long id) {
-        return userDao.findById(id);
+        return userDao.findById(id)
+                .orElseThrow(() -> new ValidationException("Не найден пользователь с id: " + id));
     }
 
     @Override

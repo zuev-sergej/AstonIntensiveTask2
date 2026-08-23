@@ -1,22 +1,19 @@
 <configuration>
-    <!-- Аппендер для консоли -->
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <!-- Уровни по умолчанию -->
     <root level="WARN">
         <appender-ref ref="STDOUT"/>
     </root>
 
-    <!-- Твой пакет: можно видеть INFO/DEBUG, если нужно для отладки -->
     <logger name="com.example.userservice" level="INFO"/>
 
-    <!-- Подавляем шум от Hibernate и JDBC -->
     <logger name="org.hibernate" level="WARN"/>
-    <logger name="org.hibernate.SQL" level="ERROR"/>          <!-- SQL можно оставить ERROR, чтобы видеть только проблемы -->
+    <logger name="org.hibernate.SQL" level="ERROR"/>
     <logger name="org.hibernate.type.descriptor.sql" level="OFF"/>
     <logger name="org.postgresql" level="WARN"/>
 

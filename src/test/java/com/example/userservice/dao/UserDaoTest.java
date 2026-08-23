@@ -6,11 +6,12 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.*;
-import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,9 +21,9 @@ public class UserDaoTest {
     @Container
     private static final PostgreSQLContainer postgres =
             new PostgreSQLContainer("postgres:15")
-            .withDatabaseName("user_test")
-            .withUsername("test")
-            .withPassword("test");
+                    .withDatabaseName("user_test")
+                    .withUsername("test")
+                    .withPassword("test");
 
     private static SessionFactory testSessionFactory;
     private UserDaoImpl userDaoImpl;
@@ -35,6 +36,13 @@ public class UserDaoTest {
                 postgres.getPassword()
         );
 
+    }
+
+    @AfterAll
+    static void closeSessionFactory() {
+        if (testSessionFactory != null) {
+            testSessionFactory.close();
+        }
     }
 
     @BeforeEach
@@ -53,19 +61,14 @@ public class UserDaoTest {
         }
     }
 
-    @AfterAll
-    static void closeSessionFactory() {
-        if (testSessionFactory != null) {
-            testSessionFactory.close();
-        }
-    }
-
     @Test
     void testSaveUser() {
         var user = new User("Anton", "anton@mail.ru", 25);
         userDaoImpl.save(user);
 
-        User saveUser = userDaoImpl.findById(user.getId());
+        Optional<User> saveUserOpt = userDaoImpl.findById(user.getId());
+
+        User saveUser = saveUserOpt.get();
 
         assertNotNull(saveUser, "Пользователь не найден в БД после сохранения");
         assertEquals("Anton", saveUser.getName());
@@ -84,9 +87,12 @@ public class UserDaoTest {
 
         userDaoImpl.update(user);
 
-        User updateUser = userDaoImpl.findById(user.getId());
+        Optional<User> updateUserOpt = userDaoImpl.findById(user.getId());
 
-        assertNotNull(updateUser, "Пользователь не найден после обновления");
+        assertTrue(updateUserOpt.isPresent(), "Пользователь должен быть найден после обновления");
+
+        User updateUser = updateUserOpt.get();
+
         assertEquals("NewName", updateUser.getName());
         assertEquals("newName@mail.ru", updateUser.getEmail());
         assertEquals(21, updateUser.getAge());
@@ -100,8 +106,10 @@ public class UserDaoTest {
         assertNotNull(user, "Пользователь не найден в БД после сохранения");
 
         userDaoImpl.remove(user.getId());
-        User found = userDaoImpl.findById(user.getId());
-        assertNull(found, "Пользователь должен быть удалён из БД");
+
+        Optional<User> found = userDaoImpl.findById(user.getId());
+
+        assertFalse(found.isPresent(), "Пользователь должен быть удалён из БД");
     }
 
     @Test
@@ -109,7 +117,7 @@ public class UserDaoTest {
         var user = new User("Anton", "anton@mail.ru", 25);
         userDaoImpl.save(user);
 
-        User found = userDaoImpl.findById(user.getId());
+        Optional<User> found = userDaoImpl.findById(user.getId());
         assertNotNull(found, "Пользователь найден в БД после сохранения");
     }
 

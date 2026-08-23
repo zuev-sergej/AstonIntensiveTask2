@@ -6,7 +6,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+
 import java.util.List;
+import java.util.Optional;
 
 public class UserDaoImpl implements UserDao {
     private final SessionFactory sessionFactory;
@@ -16,12 +18,13 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void save(User user) {
+    public Optional<User> save(User user) {
         try (Session session = sessionFactory.openSession()) {
             Transaction transaction = session.beginTransaction();
             try {
                 session.persist(user);
                 transaction.commit();
+                return Optional.of(user);
             } catch (Exception e) {
                 transaction.rollback();
                 throw e;
@@ -68,9 +71,10 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User findById(Long id) {
+    public Optional<User> findById(Long id) {
         try (Session session = HibernateSession.getSessionFactory().openSession()) {
-            return session.find(User.class, id);
+            User user = session.find(User.class, id);
+            return Optional.ofNullable(user);
         }
     }
 

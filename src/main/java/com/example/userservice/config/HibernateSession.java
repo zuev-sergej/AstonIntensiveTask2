@@ -1,6 +1,5 @@
 package com.example.userservice.config;
 
-import lombok.Getter;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
